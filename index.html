@@ -1,1037 +1,61 @@
-<!DOCTYPE html>
-<html lang="ar" dir="rtl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🏆 القيصر التجاري - Trade Caesar</title>
-    
-    <!-- 1. Firebase Integration -->
-    <script type="module">
-      import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-      import { getFirestore } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
-      import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+<!-- 🔒 Firebase Integration - SECURE VERSION -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, enableIndexedDbPersistence } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+  import { getAuth, setPersistence, browserSessionPersistence, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-      const firebaseConfig = {
-        apiKey: "AIzaSyDhbqPOwAvgNQ3Qy0waQRLW_gD9UtnOn-s",
-        authDomain: "global-trade-empire-c4d98.firebaseapp.com",
-        projectId: "global-trade-empire-c4d98",
-        storageBucket: "global-trade-empire-c4d98.firebasestorage.app",
-        messagingSenderId: "43498167064",
-        appId: "1:43498167064:web:14e72ac40cd0e7a4e49c6d"
-      };
+  // ⚠️ استبدل هذه القيم بمفاتيحك الجديدة من Firebase Console
+  const firebaseConfig = {
+    apiKey: "TU_NUEVA_API_KEY_AQUI", // 🔄 استبدل هذا بالمفتاح الجديد
+    authDomain: "TU_DOMINIO.firebaseapp.com",
+    projectId: "TU_PROJECT_ID",
+    storageBucket: "TU_PROJECT_ID.firebasestorage.app",
+    messagingSenderId: "TU_SENDER_ID",
+    appId: "TU_APP_ID"
+  };
 
-      const app = initializeApp(firebaseConfig);
-      const db = getFirestore(app);
-      const auth = getAuth(app);
+  try {
+    // تهيئة Firebase
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-      window.caesarFirebase = { app, db, auth, createUserWithEmailAndPassword, signInWithEmailAndPassword };
-      console.log('🏆 Firebase جاهز للمملكة القيصرية!');
-      
-      // تسجيل دخول تلقائي عند تحميل الصفحة
-      auth.onAuthStateChanged((user) => {
-        if (user) {
-          console.log('👑 القيصر مسجل:', user.email);
-        }
-      });
-    </script>
-    
-    <!-- 2. Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- 3. الأنماط القيصرية الأسطورية -->
-    <style>
-        .imperial-bg {
-            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a2e 50%, #16213e 100%);
-        }
-        .gold-gradient {
-            background: linear-gradient(90deg, #D4AF37 0%, #FFD700 50%, #D4AF37 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .imperial-card {
-            background: rgba(255, 255, 255, 0.05);
-            backdrop-filter: blur(20px);
-            border: 1px solid rgba(212, 175, 55, 0.3);
-            border-radius: 20px;
-        }
-        .crown-effect {
-            position: relative;
-        }
-        .crown-effect::before {
-            content: "👑";
-            position: absolute;
-            top: -15px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 24px;
-        }
-        .profit-badge {
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.8; }
-            100% { opacity: 1; }
-        }
-        .robot-active {
-            box-shadow: 0 0 25px rgba(212, 175, 55, 0.5);
-        }
-    </style>
-</head>
-<body class="imperial-bg text-white min-h-screen font-sans">
-    
-    <!-- التاج الإمبراطوري -->
-    <header class="crown-effect pt-8 pb-6">
-        <div class="container mx-auto text-center">
-            <h1 class="text-5xl font-bold gold-gradient mb-2">🏆 القيصر التجاري</h1>
-            <p class="text-xl text-gray-300">Trade Caesar - إمبراطورية الذكاء التجاري العالمي</p>
-            <div class="flex justify-center space-x-4 space-x-reverse mt-6">
-                <button onclick="showImperialPalace()" class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">🏠 القصر الإمبراطوري</button>
-                <button onclick="showSmartArmy()" class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">🤖 الجيش الذكي</button>
-                <button onclick="showRoyalTreasury()" class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">💰 الخزينة الملكية</button>
-                <button onclick="showGlobalEmpire()" class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">🌍 الإمبراطورية العالمية</button>
-            </div>
-        </div>
-    </header>
+    // 🔒 تعزيز أمان الجلسة (لا حفظ تلقائي للتسجيل)
+    setPersistence(auth, browserSessionPersistence);
 
-    <!-- شريط المستخدم -->
-    <div id="user-bar" class="imperial-card mx-4 mb-6 mt-4 p-4">
-        <div class="flex justify-between items-center">
-            <div>
-                <h3 class="font-bold">👑 نظام القيصرية</h3>
-                <p id="user-status" class="text-sm text-gray-400">لم يتم تتويج القيصر بعد</p>
-            </div>
-            <div class="flex space-x-2 space-x-reverse">
-                <button onclick="crownUser()" class="px-4 py-2 bg-green-600 rounded hover:bg-green-700">👑 تتويج القيصر</button>
-                <button onclick="loginUser()" class="px-4 py-2 bg-blue-600 rounded hover:bg-blue-700">🚪 دخول القصر</button>
-                <button onclick="logoutUser()" class="px-4 py-2 bg-gray-600 rounded hover:bg-gray-700">🚶 خروج</button>
-            </div>
-        </div>
-    </div>
+    // 🔒 تمكين التخزين المؤقت للبيانات
+    enableIndexedDbPersistence(db).catch((err) => {
+      console.warn('⚠️ تعذر تفعيل التخزين المؤقت:', err.code);
+    });
 
-    <!-- لوحة القيادة الإمبراطورية -->
-    <main class="container mx-auto px-4 pb-8">
-        
-        <!-- الإحصائيات الملكية -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="imperial-card p-6 text-center">
-                <div class="text-4xl mb-2">🤖</div>
-                <h3 class="text-2xl font-bold gold-gradient">الجيش الذكي</h3>
-                <p class="text-gray-300 mt-2">12 روبوتاً يعملون لحماية إمبراطوريتك</p>
-                <div id="active-bots" class="mt-4 text-2xl font-bold">12/12 نشط</div>
-            </div>
-            
-            <div class="imperial-card p-6 text-center">
-                <div class="text-4xl mb-2">💰</div>
-                <h3 class="text-2xl font-bold gold-gradient">الخزينة الملكية</h3>
-                <p class="text-gray-300 mt-2">ثروتك المحمية بأذكى الأنظمة</p>
-                <div id="total-wealth" class="mt-4 text-2xl font-bold gold-gradient">$١٠٠٬٢٥٠</div>
-            </div>
-            
-            <div class="imperial-card p-6 text-center">
-                <div class="text-4xl mb-2">🌍</div>
-                <h3 class="text-2xl font-bold gold-gradient">الإمبراطورية العالمية</h3>
-                <p class="text-gray-300 mt-2">سيطرتك على ٥٠ سوقاً عالمياً</p>
-                <div id="global-markets" class="mt-4 text-2xl font-bold">٥٠ دولة</div>
-            </div>
-        </div>
+    // 🔒 مراقبة حالة المصادقة
+    auth.onAuthStateChanged((user) => {
+      const userStatus = document.getElementById('user-status');
+      if (user && user.emailVerified) {
+        userStatus.textContent = `👑 القيصر: ${user.email}`;
+        userStatus.style.color = '#10B981';
+        console.log('✅ القيصر مسجل:', user.email);
+      } else {
+        userStatus.textContent = '🔒 لم يتم تتويج القيصر بعد';
+        userStatus.style.color = '#9CA3AF';
+      }
+    });
 
-        <!-- الروبوتات الإمبراطورية -->
-        <div class="imperial-card p-6 mb-10">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-3xl font-bold gold-gradient">🤖 الجيش الذكي الإمبراطوري</h2>
-                <button onclick="toggleAllBots()" class="imperial-card px-6 py-3 hover:bg-yellow-900/30">تشغيل/إيقاف الجيش</button>
-            </div>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- روبوت القيصر الذهبي -->
-                <div id="bot-gold" class="imperial-card p-5 robot-active border-l-4 border-yellow-500">
-                    <div class="flex items-center mb-4">
-                        <div class="text-3xl">👑</div>
-                        <div class="mr-3">
-                            <h3 class="font-bold text-lg">روبوت القيصر الذهبي</h3>
-                            <p class="text-sm text-gray-400">تداول الذهب بذكاء قيصري</p>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>الدقة:</span>
-                            <span class="text-green-400">٩٨.٧٪</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 98%"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>الأرباح اليوم:</span>
-                            <span class="text-yellow-400">+$١٬٢٥٠</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-500 h-2 rounded-full" style="width: 85%"></div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-green-400">🟢 نشط</span>
-                        <button onclick="toggleBot('gold')" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded">إيقاف</button>
-                    </div>
-                </div>
+    // 🔒 حفظ Firebase في نطاق آمن
+    window.caesarFirebase = { 
+      app, 
+      db, 
+      auth,
+      // 🔒 تصدير الوظائف الضرورية فقط
+      createUser: createUserWithEmailAndPassword,
+      signIn: signInWithEmailAndPassword,
+      signOut: signOut
+    };
 
-                <!-- روبوت الفاتح التجاري -->
-                <div id="bot-conqueror" class="imperial-card p-5 robot-active border-l-4 border-blue-500">
-                    <div class="flex items-center mb-4">
-                        <div class="text-3xl">⚔️</div>
-                        <div class="mr-3">
-                            <h3 class="font-bold text-lg">روبوت الفاتح التجاري</h3>
-                            <p class="text-sm text-gray-400">فتح الأسواق العالمية</p>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>الأسواق المفتوحة:</span>
-                            <span class="text-blue-400">١٥ سوق</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div class="bg-blue-500 h-2 rounded-full" style="width: 75%"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>الإيرادات:</span>
-                            <span class="text-yellow-400">+$٨٥٠</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-500 h-2 rounded-full" style="width: 65%"></div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-green-400">🟢 نشط</span>
-                        <button onclick="toggleBot('conqueror')" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded">إيقاف</button>
-                    </div>
-                </div>
+    console.log('🏆 Firebase جاهز بأمان للمملكة القيصرية!');
 
-                <!-- روبوت الخزينة الذكي -->
-                <div id="bot-treasury" class="imperial-card p-5 robot-active border-l-4 border-green-500">
-                    <div class="flex items-center mb-4">
-                        <div class="text-3xl">🏦</div>
-                        <div class="mr-3">
-                            <h3 class="font-bold text-lg">روبوت الخزينة الذكي</h3>
-                            <p class="text-sm text-gray-400">إدارة ثروتك بذكاء ملكي</p>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>العائد الشهري:</span>
-                            <span class="text-green-400">١٥٪</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div class="bg-green-500 h-2 rounded-full" style="width: 90%"></div>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <div class="flex justify-between text-sm mb-1">
-                            <span>الاستثمارات:</span>
-                            <span class="text-yellow-400">$٥٠٬٠٠٠</span>
-                        </div>
-                        <div class="w-full bg-gray-700 rounded-full h-2">
-                            <div class="bg-yellow-500 h-2 rounded-full" style="width: 70%"></div>
-                        </div>
-                    </div>
-                    <div class="flex justify-between">
-                        <span class="text-sm text-green-400">🟢 نشط</span>
-                        <button onclick="toggleBot('treasury')" class="text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded">إيقاف</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- الخزينة الإمبراطورية -->
-        <div class="imperial-card p-8 mb-10">
-            <h2 class="text-3xl font-bold text-center gold-gradient mb-8">💰 الخزينة الملكية</h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- الإحصائيات المالية -->
-                <div>
-                    <h3 class="text-2xl font-bold mb-6">📊 إحصائيات المملكة</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>إجمالي الثروة:</span>
-                            <span id="wealth-total" class="text-2xl font-bold gold-gradient">$١٠٠٬٢٥٠</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>الأرباح اليوم:</span>
-                            <span id="daily-profit" class="text-2xl font-bold text-green-400">+$٣٬٥٨٠</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>نمو المملكة:</span>
-                            <span id="growth-rate" class="text-2xl font-bold text-blue-400">+٢٤.٥٪</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>عدد الرعايا:</span>
-                            <span id="subjects-count" class="text-2xl font-bold">١٬٢٥٠</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- التحكم الملكي -->
-                <div>
-                    <h3 class="text-2xl font-bold mb-6">👑 أوامر القيصر</h3>
-                    <div class="space-y-4">
-                        <button onclick="withdrawRoyalTreasure()" class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">🏦</span>
-                            <div>
-                                <div class="font-bold">سحب من الخزينة</div>
-                                <div class="text-sm text-gray-400">سحب أرباحك إلى حسابك الشخصي</div>
-                            </div>
-                        </button>
-                        <button onclick="expandEmpire()" class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">🔄</span>
-                            <div>
-                                <div class="font-bold">توسيع الإمبراطورية</div>
-                                <div class="text-sm text-gray-400">استثمار في أسواق جديدة</div>
-                            </div>
-                        </button>
-                        <button onclick="issueRoyalDecree()" class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">📜</span>
-                            <div>
-                                <div class="font-bold">مراسيم ملكية</div>
-                                <div class="text-sm text-gray-400">إصدار أوامر للجيش الذكي</div>
-                            </div>
-                        </button>
-                        <button onclick="enhanceSecurity()" class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">🛡️</span>
-                            <div>
-                                <div class="font-bold">حصانة ملكية</div>
-                                <div class="text-sm text-gray-400">تعزيز أمن المملكة</div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- المعاملات الملكية -->
-        <div class="imperial-card p-6">
-            <h2 class="text-3xl font-bold text-center gold-gradient mb-8">📜 السجلات الملكية</h2>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-gray-700">
-                            <th class="p-3 text-right">المعاملات الملكية</th>
-                            <th class="p-3 text-right">المبلغ</th>
-                            <th class="p-3 text-right">الحالة</th>
-                            <th class="p-3 text-right">الختم الملكي</th>
-                        </tr>
-                    </thead>
-                    <tbody id="royal-transactions">
-                        <!-- ستضاف المعاملات تلقائياً -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- الفريق الإمبراطوري -->
-    <footer class="container mx-auto px-4 py-10 text-center text-gray-400">
-        <div class="imperial-card p-8">
-            <p class="text-2xl gold-gradient font-bold mb-4">🏆 القيصر التجاري - Trade Caesar</p>
-            <p class="mb-2">🇨🇳 + 🇮🇶 = 🌍</p>
-            <p class="mb-4">إمبراطورية الذكاء التجاري العالمي - من الصين إلى العراق إلى العالم</p>
-            <p class="text-sm">© ٢٠٢٤ - كل الحقوق محفوظة للمملكة القيصرية</p>
-            <p class="text-sm mt-2">⚡ يعمل على GitHub + Netlify + Firebase + الذكاء الاصطناعي المتقدم</p>
-        </div>
-    </footer>
-
-    <!-- النظام الإمبراطوري الذكي -->
-    <script>
-        // نظام القيصر التجاري
-        class TradeCaesar {
-            constructor() {
-                this.wealth = 100250;
-                this.dailyProfit = 3580;
-                this.activeBots = 12;
-                this.markets = 50;
-                this.subjects = 1250;
-                this.growthRate = 24.5;
-                this.bots = {};
-                this.transactions = [];
-                
-                this.init();
-            }
-            
-            init() {
-                console.log('🏆 المملكة القيصرية تعمل الآن!');
-                this.initializeBots();
-                this.generateRoyalTransactions();
-                this.startImperialTrading();
-                this.updateRoyalDisplay();
-                
-                // تحقق من Firebase
-                if (window.caesarFirebase) {
-                    console.log('🔥 Firebase متصل بنجاح');
-                }
-            }
-            
-            initializeBots() {
-                this.bots = {
-                    gold: { active: true, profit: 1250, type: 'تداول', accuracy: 98.7 },
-                    conqueror: { active: true, profit: 850, type: 'فتح', markets: 15 },
-                    treasury: { active: true, profit: 2500, type: 'استثمار', returnRate: 15 }
-                };
-            }
-            
-            startImperialTrading() {
-                // تداول إمبراطوري كل 5 ثوان
-                setInterval(() => {
-                    this.generateImperialProfit();
-                    this.updateRoyalDisplay();
-                    this.addRoyalTransaction();
-                }, 5000);
-            }
-            
-            generateImperialProfit() {
-                let newProfit = 0;
-                
-                // احسب الأرباح من الروبوتات النشطة
-                Object.values(this.bots).forEach(bot => {
-                    if (bot.active && bot.profit) {
-                        const randomIncrease = Math.floor(Math.random() * 50) + 25;
-                        newProfit += randomIncrease;
-                    }
-                });
-                
-                this.wealth += newProfit;
-                this.dailyProfit += newProfit;
-                
-                return newProfit;
-            }
-            
-            updateRoyalDisplay() {
-                document.getElementById('total-wealth').textContent = `$${this.wealth.toLocaleString('ar-EG')}`;
-                document.getElementById('wealth-total').textContent = `$${this.wealth.toLocaleString('ar-EG')}`;
-                document.getElementById('daily-profit').textContent = `+$${this.dailyProfit.toLocaleString('ar-EG')}`;
-                document.getElementById('growth-rate').textContent = `+${this.growthRate.toFixed(1)}%`;
-                document.getElementById('subjects-count').textContent = this.subjects.toLocaleString('ar-EG');
-                
-                const activeCount = Object.values(this.bots).filter(b => b.active).length;
-                document.getElementById('active-bots').textContent = `${activeCount}/12 نشط`;
-            }
-            
-            generateRoyalTransactions() {
-                const transactions = [
-                    { type: 'تداول ذهب ملكي', amount: 1250, status: 'مبرر 👑', time: 'الآن' },
-                    { type: 'فتح سوق جديد', amount: 850, status: 'ناجح ⚔️', time: 'منذ 5 دقائق' },
-                    { type: 'استثمار ملكي', amount: 2500, status: 'مكتمل 🏦', time: 'منذ 30 دقيقة' },
-                    { type: 'اتفاقية تجارية', amount: 1800, status: 'مختوم 👑', time: 'منذ ساعة' }
-                ];
-                
-                const container = document.getElementById('royal-transactions');
-                transactions.forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.className = 'border-b border-gray-800/50 hover:bg-yellow-900/10';
-                    row.innerHTML = `
-                        <td class="p-3">${transaction.type}</td>
-                        <td class="p-3 font-bold text-yellow-400">+$${transaction.amount.toLocaleString('ar-EG')}</td>
-                        <td class="p-3"><span class="px-3 py-1 rounded-full bg-green-900/50 text-green-300">${transaction.status}</span></td>
-                        <td class="p-3 text-gray-400">${transaction.time}</td>
-                    `;
-                    container.appendChild(row);
-                });
-            }
-            
-            addRoyalTransaction() {
-                const types = [
-                    'ربح ذهبي ملكي',
-                    'عمولة فتح سوق',
-                    'استثمار ناجح',
-                    'اتفاقية تجارية',
-                    'ضريبة مملكة'
-                ];
-                
-                const type = types[Math.floor(Math.random() * types.length)];
-                const amount = Math.floor(Math.random() * 300) + 150;
-                
-                const container = document.getElementById('royal-transactions');
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-800/50 hover:bg-yellow-900/10';
-                row.innerHTML = `
-                    <td class="p-3">${type}</td>
-                    <td class="p-3 font-bold text-yellow-400">+$${amount.toLocaleString('ar-EG')}</td>
-                    <td class="p-3"><span class="px-3 py-1 rounded-full bg-green-900/50 text-green-300">مبرر 👑</span></td>
-                    <td class="p-3 text-gray-400">الآن</td>
-                `;
-                
-                container.insertBefore(row, container.firstChild);
-                
-                if (container.children.length > 8) {
-                    container.removeChild(container.lastChild);
-                }
-            }
-            
-            toggleBot(botId) {
-                if (this.bots[botId]) {
-                    this.bots[botId].active = !this.bots[botId].active;
-                    const botElement = document.getElementById(`bot-${botId}`);
-                    const button = botElement.querySelector('button');
-                    
-                    if (this.bots[botId].active) {
-                        botElement.classList.add('robot-active');
-                        botElement.querySelector('.text-green-400').textContent = '🟢 نشط';
-                        button.textContent = 'إيقاف';
-                        button.className = 'text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded';
-                    } else {
-                        botElement.classList.remove('robot-active');
-                        botElement.querySelector('.text-green-400').textContent = '🔴 متوقف';
-                        button.textContent = 'تشغيل';
-                        button.className = 'text-sm bg-green-500 hover:bg-green-600 px-3 py-1 rounded';
-                    }
-                    
-                    // حفظ في Firebase إذا كان متصلاً
-                    this.saveToFirebase();
-                }
-            }
-            
-            toggleAllBots() {
-                const allActive = Object.values(this.bots).every(bot => bot.active);
-                
-                Object.keys(this.bots).forEach(botId => {
-                    this.bots[botId].active = !allActive;
-                    const botElement = document.getElementById(`bot-${botId}`);
-                    const button = botElement?.querySelector('button');
-                    
-                    if (botElement && button) {
-                        if (!allActive) {
-                            botElement.classList.add('robot-active');
-                            botElement.querySelector('.text-green-400').textContent = '🟢 نشط';
-                            button.textContent = 'إيقاف';
-                            button.className = 'text-sm bg-red-500 hover:bg-red-600 px-3 py-1 rounded';
-                        } else {
-                            botElement.classList.remove('robot-active');
-                            botElement.querySelector('.text-green-400').textContent = '🔴 متوقف';
-                            button.textContent = 'تشغيل';
-                            button.className = 'text-sm bg-green-500 hover:bg-green-600 px-3 py-1 rounded';
-                        }
-                    }
-                });
-                
-                this.saveToFirebase();
-            }
-            
-            async saveToFirebase() {
-                if (window.caesarFirebase && window.caesarFirebase.auth.currentUser) {
-                    try {
-                        const user = window.caesarFirebase.auth.currentUser;
-                        const userDoc = doc(window.caesarFirebase.db, "users", user.uid);
-                        
-                        await setDoc(userDoc, {
-                            email: user.email,
-                            wealth: this.wealth,
-                            dailyProfit: this.dailyProfit,
-                            bots: this.bots,
-                            lastUpdate: new Date().toISOString()
-                        }, { merge: true });
-                        
-                        console.log('💾 تم حفظ البيانات في Firebase');
-                    } catch (error) {
-                        console.log('⚠️ خطأ في حفظ Firebase:', error);
-                    }
-                }
-            }
-            
-            async loadFromFirebase() {
-                if (window.caesarFirebase && window.caesarFirebase.auth.currentUser) {
-                    try {
-                        const user = window.caesarFirebase.auth.currentUser;
-                        const userDoc = doc(window.caesarFirebase.db, "users", user.uid);
-                        const docSnap = await getDoc(userDoc);
-                        
-                        if (docSnap.exists()) {
-                            const data = docSnap.data();
-                            this.wealth = data.wealth || this.wealth;
-                            this.dailyProfit = data.dailyProfit || this.dailyProfit;
-                            this.bots = data.bots || this.bots;
-                            console.log('📥 تم تحميل البيانات من Firebase');
-                            this.updateRoyalDisplay();
-                        }
-                    } catch (error) {
-                        console.log('⚠️ خطأ في تحميل Firebase:', error);
-                    }
-                }
-            }
-            
-            withdrawRoyalTreasure() {
-                const amount = 5000;
-                if (this.wealth >= amount) {
-                    this.wealth -= amount;
-                    this.updateRoyalDisplay();
-                    this.saveToFirebase();
-                    
-                    alert(`🏦 تم سحب $${amount.toLocaleString('ar-EG')} من الخزينة الملكية!`);
-                } else {
-                    alert('⚠️ الخزينة الملكية لا تكفي لهذا السحب!');
-                }
-            }
-            
-            expandEmpire() {
-                this.markets += 5;
-                this.subjects += 250;
-                this.growthRate += 2.5;
-                document.getElementById('global-markets').textContent = `${this.markets} دولة`;
-                this.updateRoyalDisplay();
-                this.saveToFirebase();
-                
-                alert(`🌍 تم توسيع الإمبراطورية إلى ${this.markets} سوقاً!`);
-            }
-            
-            issueRoyalDecree() {
-                const decrees = [
-                    'تفعيل جميع الروبوتات الذكية',
-                    'فتح 10 أسواق جديدة',
-                    'زيادة الاستثمارات بنسبة 25%',
-                    'تعزيز أمن المملكة'
-                ];
-                const decree = decrees[Math.floor(Math.random() * decrees.length)];
-                alert(`👑 مرسوم ملكي: ${decree}`);
-            }
-            
-            enhanceSecurity() {
-                alert('🛡️ تم تعزيز الأمن الملكي إلى المستوى القصوى!');
-            }
-        }
-        
-        // وظائف Firebase
-        async function crownUser() {
-            const email = prompt('👑 أدخل بريد القيصر الإلكتروني:');
-            const password = prompt('🔐 أدخل كلمة سر المملكة (6 أحرف على الأقل):');
-            
-            if (email && password && password.length >= 6) {
-                try {
-                    const userCredential = await window.caesarFirebase.createUserWithEmailAndPassword(
-                        window.caesarFirebase.auth, 
-                        email, 
-                        password
-                    );
-                    document.getElementById('user-status').textContent = `👑 القيصر: ${email}`;
-                    alert('🎉 تم تتويج القيصر بنجاح!');
-                    
-                    // تحميل البيانات بعد التسجيل
-                    window.caesarKingdom.loadFromFirebase();
-                } catch (error) {
-                    alert('⚠️ خطأ في التتويج: ' + error.message);
-                }
-            }
-        }
-        
-        async function loginUser() {
-            const email = prompt('🚪 أدخل بريد القيصر:');
-            const password = prompt('🔐 أدخل كلمة سر المملكة:');
-            
-            if (email && password) {
-                try {
-                    const userCredential = await window.caesarFirebase.signInWithEmailAndPassword(
-                        window.caesarFirebase.auth, 
-                        email, 
-                        password
-                    );
-                    document.getElementById('user-status').textContent = `👑 القيصر: ${email}`;
-                    alert('✅ تم دخول القصر بنجاح!');
-                    
-                    // تحميل البيانات بعد الدخول
-                    window.caesarKingdom.loadFromFirebase();
-                } catch (error) {
-                    alert('⚠️ خطأ في الدخول: ' + error.message);
-                }
-            }
-        }
-        
-        async function logoutUser() {
-            await window.caesarFirebase.auth.signOut();
-            document.getElementById('user-status').textContent = 'لم يتم تتويج القيصر بعد';
-            alert('تم تسجيل خروج القيصر');
-        }
-        
-        // وظائف العرض
-        function showImperialPalace() {
-            alert('🏰 هذا هو القصر الإمبراطوري - مركز قيادة المملكة القيصرية');
-        }
-        
-        function showSmartArmy() {
-            alert('🤖 هذا هو الجيش الذكي - 12 روبوتاً يحمون إمبراطوريتك');
-        }
-        
-        function showRoyalTreasury() {
-            alert('💰 هذه هي الخزينة الملكية - ثروتك محفوظة بأعلى مستويات الأمان');
-        }
-        
-        function showGlobalEmpire() {
-            alert('🌍 هذه هي الإمبراطورية العالمية - سيطرتك تمتد عبر 50 سوقاً');
-        }
-        
-        // بدء المملكة القيصرية
-        window.onload = function() {
-            window.caesarKingdom = new TradeCaesar();
-            
-            // مراقبة حالة المصادقة
-            window.caesarFirebase?.auth.onAuthStateChanged((user) => {
-                if (user) {
-                    document.getElementById('user-status').textContent = `👑 القيصر: ${user.email}`;
-                    console.log('👑 القيصر مسجل:', user.email);
-                    window.caesarKingdom.loadFromFirebase();
-                }
-            });
-        };
-    </script>
-</body>
-</html>
-    <!-- التاج الإمبراطوري -->
-    <header class="crown-effect pt-8 pb-6">
-        <div class="container mx-auto text-center">
-            <h1 class="text-5xl font-bold gold-gradient mb-2">🏆 القيصر التجاري</h1>
-            <p class="text-xl text-gray-300">Trade Caesar - إمبراطورية الذكاء التجاري العالمي</p>
-            <div class="flex justify-center space-x-4 space-x-reverse mt-6">
-                <button class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">🏠 القصر الإمبراطوري</button>
-                <button class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">🤖 الجيش الذكي</button>
-                <button class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">💰 الخزينة الملكية</button>
-                <button class="imperial-card px-6 py-3 hover:bg-yellow-900/30 transition">🌍 الإمبراطورية العالمية</button>
-            </div>
-        </div>
-    </header>
-
-    <!-- لوحة القيادة الإمبراطورية -->
-    <main class="container mx-auto px-4 py-8">
-        
-        <!-- الإحصائيات الملكية -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-            <div class="imperial-card p-6 text-center">
-                <div class="text-4xl mb-2">🤖</div>
-                <h3 class="text-2xl font-bold gold-gradient">الجيش الذكي</h3>
-                <p class="text-gray-300 mt-2">12 روبوتاً يعملون لحماية إمبراطوريتك</p>
-                <div class="mt-4 text-2xl font-bold">12/12 نشط</div>
-            </div>
-            
-            <div class="imperial-card p-6 text-center">
-                <div class="text-4xl mb-2">💰</div>
-                <h3 class="text-2xl font-bold gold-gradient">الخزينة الملكية</h3>
-                <p class="text-gray-300 mt-2">ثروتك المحمية بأذكى الأنظمة</p>
-                <div class="mt-4 text-2xl font-bold gold-gradient">$١٠٠٬٠٠٠+</div>
-            </div>
-            
-            <div class="imperial-card p-6 text-center">
-                <div class="text-4xl mb-2">🌍</div>
-                <h3 class="text-2xl font-bold gold-gradient">الإمبراطورية العالمية</h3>
-                <p class="text-gray-300 mt-2">سيطرتك على ٥٠ سوقاً عالمياً</p>
-                <div class="mt-4 text-2xl font-bold">٥٠ دولة</div>
-            </div>
-        </div>
-
-        <!-- الروبوتات الإمبراطورية -->
-        <div class="imperial-card p-6 mb-10">
-            <h2 class="text-3xl font-bold text-center gold-gradient mb-8">🤖 الجيش الذكي الإمبراطوري</h2>
-            
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                <!-- روبوت القيصر الذهبي -->
-                <div class="imperial-card p-5 border-l-4 border-yellow-500">
-                    <div class="flex items-center mb-4">
-                        <div class="text-3xl">👑</div>
-                        <div class="mr-3">
-                            <h3 class="font-bold text-lg">روبوت القيصر الذهبي</h3>
-                            <p class="text-sm text-gray-400">تداول الذهب بذكاء قيصري</p>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span>الدقة:</span>
-                            <span class="text-green-400">٩٨.٧٪</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>الأرباح اليوم:</span>
-                            <span class="text-yellow-400">+$١٬٢٥٠</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 bg-yellow-600 hover:bg-yellow-700 py-2 rounded-lg">
-                        تفعيل القيصرية
-                    </button>
-                </div>
-
-                <!-- روبوت الفاتح التجاري -->
-                <div class="imperial-card p-5 border-l-4 border-blue-500">
-                    <div class="flex items-center mb-4">
-                        <div class="text-3xl">⚔️</div>
-                        <div class="mr-3">
-                            <h3 class="font-bold text-lg">روبوت الفاتح التجاري</h3>
-                            <p class="text-sm text-gray-400">فتح الأسواق العالمية</p>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span>الأسواق المفتوحة:</span>
-                            <span class="text-blue-400">١٥ سوق</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>الإيرادات:</span>
-                            <span class="text-yellow-400">+$٨٥٠</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 bg-blue-600 hover:bg-blue-700 py-2 rounded-lg">
-                        بدء الفتح
-                    </button>
-                </div>
-
-                <!-- روبوت الخزينة الذكي -->
-                <div class="imperial-card p-5 border-l-4 border-green-500">
-                    <div class="flex items-center mb-4">
-                        <div class="text-3xl">🏦</div>
-                        <div class="mr-3">
-                            <h3 class="font-bold text-lg">روبوت الخزينة الذكي</h3>
-                            <p class="text-sm text-gray-400">إدارة ثروتك بذكاء ملكي</p>
-                        </div>
-                    </div>
-                    <div class="space-y-2">
-                        <div class="flex justify-between">
-                            <span>العائد الشهري:</span>
-                            <span class="text-green-400">١٥٪</span>
-                        </div>
-                        <div class="flex justify-between">
-                            <span>الاستثمارات:</span>
-                            <span class="text-yellow-400">$٥٠٬٠٠٠</span>
-                        </div>
-                    </div>
-                    <button class="w-full mt-4 bg-green-600 hover:bg-green-700 py-2 rounded-lg">
-                        إدارة الخزينة
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- الخزينة الإمبراطورية -->
-        <div class="imperial-card p-8 mb-10">
-            <h2 class="text-3xl font-bold text-center gold-gradient mb-8">💰 الخزينة الملكية</h2>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
-                <!-- الإحصائيات المالية -->
-                <div>
-                    <h3 class="text-2xl font-bold mb-6">📊 إحصائيات المملكة</h3>
-                    <div class="space-y-4">
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>إجمالي الثروة:</span>
-                            <span class="text-2xl font-bold gold-gradient">$١٠٠٬٢٥٠</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>الأرباح اليوم:</span>
-                            <span class="text-2xl font-bold text-green-400">+$٣٬٥٨٠</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>نمو المملكة:</span>
-                            <span class="text-2xl font-bold text-blue-400">+٢٤.٥٪</span>
-                        </div>
-                        <div class="flex justify-between items-center p-4 imperial-card">
-                            <span>عدد الرعايا:</span>
-                            <span class="text-2xl font-bold">١٬٢٥٠</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- التحكم الملكي -->
-                <div>
-                    <h3 class="text-2xl font-bold mb-6">👑 أوامر القيصر</h3>
-                    <div class="space-y-4">
-                        <button class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">🏦</span>
-                            <div>
-                                <div class="font-bold">سحب من الخزينة</div>
-                                <div class="text-sm text-gray-400">سحب أرباحك إلى حسابك الشخصي</div>
-                            </div>
-                        </button>
-                        <button class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">🔄</span>
-                            <div>
-                                <div class="font-bold">توسيع الإمبراطورية</div>
-                                <div class="text-sm text-gray-400">استثمار في أسواق جديدة</div>
-                            </div>
-                        </button>
-                        <button class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">📜</span>
-                            <div>
-                                <div class="font-bold">مراسيم ملكية</div>
-                                <div class="text-sm text-gray-400">إصدار أوامر للجيش الذكي</div>
-                            </div>
-                        </button>
-                        <button class="w-full imperial-card p-4 text-left hover:bg-yellow-900/30 transition flex items-center">
-                            <span class="text-2xl mr-3">🛡️</span>
-                            <div>
-                                <div class="font-bold">حصانة ملكية</div>
-                                <div class="text-sm text-gray-400">تعزيز أمن المملكة</div>
-                            </div>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- المعاملات الملكية -->
-        <div class="imperial-card p-6">
-            <h2 class="text-3xl font-bold text-center gold-gradient mb-8">📜 السجلات الملكية</h2>
-            
-            <div class="overflow-x-auto">
-                <table class="w-full">
-                    <thead>
-                        <tr class="border-b border-gray-700">
-                            <th class="p-3 text-right">المعاملات الملكية</th>
-                            <th class="p-3 text-right">المبلغ</th>
-                            <th class="p-3 text-right">الحالة</th>
-                            <th class="p-3 text-right">الختم الملكي</th>
-                        </tr>
-                    </thead>
-                    <tbody id="royal-transactions">
-                        <!-- ستضاف المعاملات تلقائياً -->
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </main>
-
-    <!-- الفريق الإمبراطوري -->
-    <footer class="container mx-auto px-4 py-10 text-center text-gray-400">
-        <div class="imperial-card p-8">
-            <p class="text-2xl gold-gradient font-bold mb-4">🏆 القيصر التجاري - Trade Caesar</p>
-            <p class="mb-2">🇨🇳 + 🇮🇶 = 🌍</p>
-            <p class="mb-4">إمبراطورية الذكاء التجاري العالمي - من الصين إلى العراق إلى العالم</p>
-            <p class="text-sm">© ٢٠٢٤ - كل الحقوق محفوظة للمملكة القيصرية</p>
-            <p class="text-sm mt-2">⚡ يعمل على GitHub + Netlify + Firebase + الذكاء الاصطناعي المتقدم</p>
-        </div>
-    </footer>
-
-    <!-- النظام الإمبراطوري الذكي -->
-    <script>
-        // نظام القيصر التجاري
-        class TradeCaesar {
-            constructor() {
-                this.wealth = 100250;
-                this.dailyProfit = 3580;
-                this.activeBots = 12;
-                this.markets = 50;
-                this.transactions = [];
-                
-                this.init();
-            }
-            
-            init() {
-                console.log('🏆 المملكة القيصرية تعمل الآن!');
-                this.generateRoyalTransactions();
-                this.startImperialTrading();
-                this.updateRoyalDisplay();
-            }
-            
-            startImperialTrading() {
-                // تداول إمبراطوري كل 3 ثوان
-                setInterval(() => {
-                    this.generateImperialProfit();
-                    this.updateRoyalDisplay();
-                    this.addRoyalTransaction();
-                }, 3000);
-            }
-            
-            generateImperialProfit() {
-                const profit = Math.floor(Math.random() * 200) + 100;
-                this.wealth += profit;
-                this.dailyProfit += profit;
-                
-                return profit;
-            }
-            
-            generateRoyalTransactions() {
-                const transactions = [
-                    { type: 'تداول ذهب ملكي', amount: 1250, status: 'مبرر 👑', time: 'الآن' },
-                    { type: 'فتح سوق جديد', amount: 850, status: 'ناجح ⚔️', time: 'منذ 5 دقائق' },
-                    { type: 'استثمار ملكي', amount: 2500, status: 'مكتمل 🏦', time: 'منذ 30 دقيقة' },
-                    { type: 'اتفاقية تجارية', amount: 1800, status: 'مختوم 👑', time: 'منذ ساعة' }
-                ];
-                
-                const container = document.getElementById('royal-transactions');
-                transactions.forEach(transaction => {
-                    const row = document.createElement('tr');
-                    row.className = 'border-b border-gray-800/50 hover:bg-yellow-900/10';
-                    row.innerHTML = `
-                        <td class="p-3">${transaction.type}</td>
-                        <td class="p-3 font-bold text-yellow-400">+$${transaction.amount.toLocaleString('ar-EG')}</td>
-                        <td class="p-3"><span class="px-3 py-1 rounded-full bg-green-900/50 text-green-300">${transaction.status}</span></td>
-                        <td class="p-3 text-gray-400">${transaction.time}</td>
-                    `;
-                    container.appendChild(row);
-                });
-            }
-            
-            addRoyalTransaction() {
-                const types = [
-                    'ربح ذهبي ملكي',
-                    'عمولة فتح سوق',
-                    'استثمار ناجح',
-                    'اتفاقية تجارية',
-                    'ضريبة مملكة'
-                ];
-                
-                const type = types[Math.floor(Math.random() * types.length)];
-                const amount = Math.floor(Math.random() * 300) + 150;
-                
-                const container = document.getElementById('royal-transactions');
-                const row = document.createElement('tr');
-                row.className = 'border-b border-gray-800/50 hover:bg-yellow-900/10';
-                row.innerHTML = `
-                    <td class="p-3">${type}</td>
-                    <td class="p-3 font-bold text-yellow-400">+$${amount.toLocaleString('ar-EG')}</td>
-                    <td class="p-3"><span class="px-3 py-1 rounded-full bg-green-900/50 text-green-300">مبرر 👑</span></td>
-                    <td class="p-3 text-gray-400">الآن</td>
-                `;
-                
-                container.insertBefore(row, container.firstChild);
-                
-                // احتفظ بـ 8 معاملات فقط
-                if (container.children.length > 8) {
-                    container.removeChild(container.lastChild);
-                }
-            }
-            
-            updateRoyalDisplay() {
-                // تحديث الإحصائيات الملكية
-                document.querySelectorAll('.imperial-card')[1].querySelector('.text-2xl').textContent = 
-                    `$${this.wealth.toLocaleString('ar-EG')}`;
-            }
-            
-            // أوامر قيصرية
-            issueRoyalDecree(decree) {
-                console.log(`👑 مرسوم ملكي: ${decree}`);
-                alert(`👑 تم إصدار المرسوم الملكي: ${decree}`);
-            }
-            
-            withdrawRoyalTreasure(amount) {
-                if (this.wealth >= amount) {
-                    this.wealth -= amount;
-                    this.updateRoyalDisplay();
-                    alert(`🏦 تم سحب $${amount.toLocaleString('ar-EG')} من الخزينة الملكية!`);
-                } else {
-                    alert('⚠️ الخزينة الملكية لا تكفي لهذا السحب!');
-                }
-            }
-        }
-        
-        // بدء المملكة القيصرية
-        window.onload = function() {
-            window.caesarKingdom = new TradeCaesar();
-            
-            // إضافة أوامر للزر
-            document.querySelectorAll('button')[4].onclick = () => 
-                window.caesarKingdom.withdrawRoyalTreasure(5000);
-                
-            document.querySelectorAll('button')[5].onclick = () => 
-                window.caesarKingdom.issueRoyalDecree('توسيع الإمبراطورية إلى 10 أسواق جديدة');
-                
-            document.querySelectorAll('button')[6].onclick = () => 
-                window.caesarKingdom.issueRoyalDecree('تفعيل جميع الروبوتات الذكية');
-                
-            document.querySelectorAll('button')[7].onclick = () => 
-                window.caesarKingdom.issueRoyalDecree('تعزيز الأمن الملكي إلى المستوى القصوى');
-        };
-    </script>
-</body>
-</html>
+  } catch (error) {
+    console.error('🔥 خطأ حرج في إعداد Firebase:', error);
+    alert('⚠️ خطأ في النظام الملكي. يرجى تحديث الصفحة.');
+  }
+</script>
